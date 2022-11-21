@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using DemoApp1.Models;
 namespace DemoApp1
 {
     public class Startup
@@ -25,6 +25,7 @@ namespace DemoApp1
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddSingleton<IEmployeeRepository, MockEmployeeRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,54 +41,20 @@ namespace DemoApp1
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            //app.Use(async (context,next) =>
-            //{
-            //    await context.Response.WriteAsync("middleware 1: Incoing Request \n");
-            //    await next();
-            //    await context.Response.WriteAsync("Middleware 1:OutGoing Responses\n");
-            //});
-            //app.Use(async (context, next) =>
-            //{
-            //    await context.Response.WriteAsync("middleware 2: Incoing Request \n");
-            //    await next();
-            //    await context.Response.WriteAsync("Middleware 2:OutGoing Responses\n");
-            //});
-            //app.Run(async (context) =>
-            //{
-            //    await context.Response.WriteAsync("middleware 3: Incoing Request \n");
-            //    await context.Response.WriteAsync("Middleware 3:OutGoing Responses\n");
-            //});
+         
 
-           //  app.UseHttpsRedirection();
-           // DefaultFilesOptions defaultFilesOptions = new DefaultFilesOptions();
-           // defaultFilesOptions.DefaultFileNames.Clear();
-           // defaultFilesOptions.DefaultFileNames.Add("MyCustomPage.html");
-           // app.UseDefaultFiles(defaultFilesOptions);
-           //app.UseStaticFiles();
-
-            FileServerOptions fileServerOptions = new FileServerOptions();
-            fileServerOptions.DefaultFilesOptions.DefaultFileNames.Clear();
-            fileServerOptions.DefaultFilesOptions.DefaultFileNames.Add("MyCustomPage.html");
-            app.UseFileServer(fileServerOptions);
+            app.UseHttpsRedirection();
+           
             app.UseRouting();
 
             app.UseAuthorization();
+           
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
-                 {
-                     await context.Response.WriteAsync(Configuration["MyCustomKey"]);
-                 });
-
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=home}/{action=index}/{id?}");
             });
-
-            //app.UseEndpoints(endpoints =>
-            //app.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapControllerRoute(
-            //        name: "default",
-            //        pattern: "{controller=Home}/{action=Index}/{id?}");
-            //});
         }
     }
 }
